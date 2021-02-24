@@ -1,0 +1,13 @@
+run
+{
+allocate channel c1 type disk;
+allocate channel c2 type disk;
+CONFIGURE CONTROLFILE AUTOBACKUP OFF;
+backup as compressed backupset  incremental level= 0  skip inaccessible filesperset 6 Database format='/u01/backupsets/datafile_%U_%T'  tag='bak_datafile"' ;
+sql 'alter system archive log current';
+backup archivelog all tag='bak_arc' format='/u01/backupsets/arch_%U_%T' skip inaccessible  filesperset 6 not  backed up 1 times  delete input;
+backup current controlfile tag='bak_ctlfile' format='/u01/backupsets/ctl_file_%U_%T';
+backup spfile tag='bak_spfile' format='/u01/backupsets/spfile_%U_%T';
+release channel c2;
+release channel c1;
+}
